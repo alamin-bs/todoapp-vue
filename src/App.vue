@@ -1,34 +1,19 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <h1>{{ count }}</h1>
-    <button @click="incrementBy">increment</button>
-    <todo-list test="hello test" fest="hello fest"></todo-list>
-    <test></test>
+    <todo-list></todo-list>
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import store from "./store";
 import TodoList from "./components/TodoList.vue";
-import Test from "./components/Test.vue";
-import { mapState } from "vuex";
+
 export default {
   name: "App",
   store,
   components: {
-    // HelloWorld
     TodoList,
-    Test,
   },
-  methods: {
-    incrementBy() {
-      return this.$store.commit("incrementBy", { amount: 5 });
-    },
-  },
-  computed: mapState(["count"]),
 };
 </script>
 

@@ -11,29 +11,28 @@
           v-model="todo"
           v-on:keyup.enter="submit"
         />
-        <p>{{ activeList(currentShowingCategory) }}</p>
+
         <div v-if="todosList && todosList.length">
           <ul class="list-group">
             <li
               class="list-group-item"
-              v-for="(check, index) in activeList(currentShowingCategory)"
-              :key="check.id"
+              v-for="(todo, index) in activeList(currentShowingCategory)"
+              :key="todo.id"
             >
               <input
                 type="checkbox"
-                :id="check.id"
-                :value="check.isActive"
-                :checked="check.isActive"
-                @click="changingStatusOfTodo(check, index)"
+                :id="todo.id"
+                :value="todo.isActive"
+                :checked="todo.isActive"
+                @click="changingStatusOfTodo(todo, index)"
               />
               <label
                 class="label"
                 :class="[
-                  check.isActive &&
-                    'text-decoration-line-through deactivecolor',
+                  todo.isActive && 'text-decoration-line-through deactivecolor',
                 ]"
-                :for="check.id"
-                ><h4>{{ check.name }}</h4></label
+                :for="todo.id"
+                ><h4>{{ todo.name }}</h4></label
               >
             </li>
             <li class="list-group-item">
