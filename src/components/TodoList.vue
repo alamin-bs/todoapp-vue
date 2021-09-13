@@ -44,8 +44,9 @@
                     :value="checkAll"
                     :checked="checkAll"
                     v-model="checkAll"
+                    @click="handleCheckAll"
                   />
-                  <label class="label" for="checkAll"> check All </label>
+                  <label class="label" for="checkAll"> Check All </label>
                 </div>
                 <div class="col-5 d-flex justify-content-end">
                   <p>
@@ -116,6 +117,9 @@ export default {
   },
 
   methods: {
+    handleCheckAll() {
+      store.commit("checkAll", { checkAll: this.checkAll });
+    },
     changingStatusOfTodo(todo, index) {
       store.commit("changingStatus", { todo, index });
     },
@@ -136,25 +140,8 @@ export default {
       store.commit("clearDoneTasks");
     },
   },
-  watch: {
-    checkAll: function() {
-      if (this.checkAll) {
-        for (let check of this.todosList) {
-          check.isActive = true;
-        }
-      } else {
-        for (let check of this.todosList) {
-          check.isActive = false;
-        }
-      }
-    },
-  },
-  computed: {
-    itemLeft: function() {
-      const itemLeftsArray = this.todosList.filter((item) => !item.isActive);
-      return itemLeftsArray.length;
-    },
 
+  computed: {
     shouldClearCompletedBeVisible: function() {
       return this.todosList.some((item) => item.isActive);
     },
