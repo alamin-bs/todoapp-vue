@@ -4,25 +4,17 @@
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <h1>{{ count }}</h1>
     <button @click="incrementBy">increment</button>
-    <todo-list test="hello test" fest="hello fest"></todo-list>
-    <test></test>
   </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-import store from "./store";
-import TodoList from "./components/TodoList.vue";
-import Test from "./components/Test.vue";
+import store from "../store";
 import { mapState } from "vuex";
 export default {
-  name: "App",
+  name: "Test",
   store,
-  components: {
-    // HelloWorld
-    TodoList,
-    Test,
-  },
+
   methods: {
     incrementBy() {
       return this.$store.commit("incrementBy", { amount: 5 });

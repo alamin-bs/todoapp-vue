@@ -11,11 +11,12 @@
           v-model="todo"
           v-on:keyup.enter="submit"
         />
-        <div v-if="checkedList.length">
+        <p>{{ activeList(currentShowingCategory) }}</p>
+        <div v-if="todosList && todosList.length">
           <ul class="list-group">
             <li
               class="list-group-item"
-              v-for="(check, index) in list"
+              v-for="(check, index) in activeList(currentShowingCategory)"
               :key="check.id"
             >
               <input
@@ -23,7 +24,7 @@
                 :id="check.id"
                 :value="check.isActive"
                 :checked="check.isActive"
-                v-model="list[index].isActive"
+                @click="changingStatusOfTodo(check, index)"
               />
               <label
                 class="label"
@@ -49,8 +50,8 @@
                 </div>
                 <div class="col-5 d-flex justify-content-end">
                   <p>
-                    {{ itemLeft }}
-                    {{ checkedList.length > 1 ? "items" : "item" }} left
+                    {{ totalUndoneTasks }}
+                    {{ todosList.length > 1 ? "items" : "item" }} left
                   </p>
                 </div>
               </div>
@@ -59,21 +60,23 @@
               <div class="row">
                 <div class="col-7 btn-group">
                   <button
-                    :class="isShowAll && 'active-button'"
+                    :class="currentShowingCategory == 'all' && 'active-button'"
                     type="button"
                     v-on:click="handleAllLists"
                   >
                     All
                   </button>
                   <button
-                    :class="isShowActive && 'active-button'"
+                    :class="
+                      currentShowingCategory == 'undone' && 'active-button'
+                    "
                     type="button"
                     v-on:click="handleActiveLists"
                   >
                     Active
                   </button>
                   <button
-                    :class="isShowCompleted && 'active-button'"
+                    :class="currentShowingCategory == 'done' && 'active-button'"
                     type="button"
                     v-on:click="handleCompletedLists"
                   >
@@ -84,11 +87,7 @@
                   v-if="shouldClearCompletedBeVisible"
                   class="col-5 d-flex justify-content-end"
                 >
-                  <button
-                    :class="isShowClearCompleted && 'active-button'"
-                    type="button"
-                    v-on:click="handleClearCompletedTasks"
-                  >
+                  <button type="button" v-on:click="handleClearCompletedTasks">
                     Clear Completed
                   </button>
                 </div>
@@ -104,63 +103,48 @@
   </div>
 </template>
 <script>
+import { mapGetters, mapState } from "vuex";
+import store from "../store";
+
 export default {
   data: function() {
     return {
-      checkedList: [],
       todo: "",
       id: 0,
+      currentShowingCategory: "all",
       checkAll: false,
-      isShowAll: true,
-      isShowActive: false,
-      isShowCompleted: false,
-      isShowClearCompleted: false,
     };
   },
 
   methods: {
+    changingStatusOfTodo(todo, index) {
+      store.commit("changingStatus", { todo, index });
+    },
     submit() {
-      this.checkedList.push({
-        id: ++this.id,
-        name: this.todo,
-        isActive: false,
-      });
+      store.commit("addTodo", { id: ++this.id, todo: this.todo });
       this.todo = "";
     },
     handleAllLists() {
-      this.isShowAll = true;
-      this.isShowActive = false;
-      this.isShowCompleted = false;
-      this.isShowClearCompleted = false;
+      this.currentShowingCategory = "all";
     },
     handleActiveLists() {
-      this.isShowActive = true;
-      this.isShowAll = false;
-      this.isShowCompleted = false;
-      this.isShowClearCompleted = false;
+      this.currentShowingCategory = "undone";
     },
     handleCompletedLists() {
-      this.isShowCompleted = true;
-      this.isShowActive = false;
-      this.isShowAll = false;
-      this.isShowClearCompleted = false;
+      this.currentShowingCategory = "done";
     },
     handleClearCompletedTasks() {
-      this.isShowClearCompleted = true;
-      this.isShowCompleted = false;
-      this.isShowActive = false;
-      this.isShowAll = false;
-      this.checkedList = this.checkedList.filter((item) => !item.isActive);
+      store.commit("clearDoneTasks");
     },
   },
   watch: {
     checkAll: function() {
       if (this.checkAll) {
-        for (let check of this.checkedList) {
+        for (let check of this.todosList) {
           check.isActive = true;
         }
       } else {
-        for (let check of this.checkedList) {
+        for (let check of this.todosList) {
           check.isActive = false;
         }
       }
@@ -168,21 +152,15 @@ export default {
   },
   computed: {
     itemLeft: function() {
-      const itemLeftsArray = this.checkedList.filter((item) => !item.isActive);
+      const itemLeftsArray = this.todosList.filter((item) => !item.isActive);
       return itemLeftsArray.length;
     },
-    list() {
-      return this.checkedList.filter((item) =>
-        this.isShowActive
-          ? !item.isActive
-          : this.isShowCompleted
-          ? item.isActive
-          : item
-      );
-    },
+
     shouldClearCompletedBeVisible: function() {
-      return this.checkedList.some((item) => item.isActive);
+      return this.todosList.some((item) => item.isActive);
     },
+    ...mapState(["todosList"]),
+    ...mapGetters(["activeList", "totalUndoneTasks"]),
   },
 };
 </script>
