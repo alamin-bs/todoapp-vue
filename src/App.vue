@@ -5,12 +5,11 @@
 </template>
 
 <script>
-import store from "./store";
+//import store from "./store";
 import TodoList from "./components/TodoList.vue";
 
 export default {
   name: "App",
-  store,
   components: {
     TodoList,
   },
