@@ -1,8 +1,6 @@
-import Vue from "vue";
-import Vuex from "vuex";
-Vue.use(Vuex);
-//let id = 0;
-export default new Vuex.Store({
+import { createStore } from "vuex";
+
+const store = createStore({
   state: {
     count: 0,
     todosList: [],
@@ -55,3 +53,4 @@ export default new Vuex.Store({
     },
   },
 });
+export default store;
